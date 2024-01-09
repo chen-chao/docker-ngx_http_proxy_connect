@@ -1,0 +1,30 @@
+diff --git a/alpine/Makefile b/alpine/Makefile
+index 4ff1760..b60aa38 100644
+--- a/alpine/Makefile
++++ b/alpine/Makefile
+@@ -92,7 +92,8 @@ BASE_CONFIGURE_ARGS=\
+ 	--with-stream \
+ 	--with-stream_realip_module \
+ 	--with-stream_ssl_module \
+-	--with-stream_ssl_preread_module
++	--with-stream_ssl_preread_module \
++	--add-module=$(CONTRIB)/tarballs/ngx_http_proxy_connect_module-0.0.5
+
+ ifeq ($(BASE_TARGET), plus)
+ BASE_CONFIGURE_ARGS+=\
+@@ -149,6 +150,15 @@ base:	${HOME}/.abuild/abuild.conf | abuild-base
+
+ $(BASE_SRC):
+ 	cd $(CONTRIB) && make .sum-nginx$(BASE_SUFFIX)
++	cd $(CONTRIB)/tarballs/ && \
++		tar xzf ngx_http_proxy_connect_module-0.0.5.tar.gz && \
++		tar xzf nginx$(BASE_SUFFIX)-$(BASE_VERSION).tar.gz && \
++		rm nginx$(BASE_SUFFIX)-$(BASE_VERSION).tar.gz && \
++		cd nginx$(BASE_SUFFIX)-$(BASE_VERSION) && \
++		patch -p1 < $(CONTRIB)/tarballs/ngx_http_proxy_connect_module-0.0.5/patch/proxy_connect_rewrite_102101.patch && \
++		cd .. && \
++		tar czf nginx$(BASE_SUFFIX)-$(BASE_VERSION).tar.gz nginx$(BASE_SUFFIX)-$(BASE_VERSION) && \
++		rm -rf nginx$(BASE_SUFFIX)-$(BASE_VERSION)
+ 	ln -s $(CONTRIB)/tarballs/$(BASE_SRC) $(BASE_SRC)
+
+ abuild-base: $(BASE_SRC)
