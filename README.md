@@ -16,14 +16,27 @@ The dockerfile is modified from the [official Dockerfile](https://github.com/ngi
 docker build -t ngx_http_proxy_connect:1.24.0.0.0.5-alpine .
 ```
 
-To include other officially supported modules, add the module version and update Line 11 and Line 55. Officially supported modules are listed [here](https://hg.nginx.org/pkg-oss/file/tip/contrib/src).
+To include other officially supported modules, update these lines in the dockerfile:
+
+```dockerfile
+# Include the module here for installation.
+# The module version can be found in its makefile.
+nginxPackages="<module-version>"
+
+# make target can be found in nginx-oss release
+su nobody -s /bin/sh -c "\
+make base <module>
+"
+```
+
+The Officially supported modules are listed [here](https://hg.nginx.org/pkg-oss/file/tip/contrib/src).
 
 ## Usage
 
 Pull `wenbushi/ngx_http_proxy_connect_module` if a prebuilt image is preferred:
 
 ```shell
-docker pull wenbushi/ngx_http_proxy_connect_module
+docker pull wenbushi/ngx_http_proxy_connect
 ```
 
 Refer to [chobits/ngx_http_proxy_connect_module](https://github.com/chobits/ngx_http_proxy_connect_module) and [nginx office image](https://hub.docker.com/_/nginx) for their usages.
